@@ -32,7 +32,8 @@ public class TerrainGenerator : MonoBehaviour {
     public int waveColorBlueBand = 1;
     public int waveHeightBand = 0;
     public int abberationBand = 2;
-
+    public int skyHueFullCycle = 100;
+    private float randomSkyHueOffset;
     public float maxDistortAmplitude;
     public int distortionBand = 0;
 
@@ -55,15 +56,16 @@ public class TerrainGenerator : MonoBehaviour {
         colorWave = new Texture2D(waveGradientLength, 1);
         heightWave = new Texture2D(heightGradientLength, 1);
         chromaticAbberation = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration>();
+        randomSkyHueOffset = Random.value;
     }
 
     void FixedUpdate() {
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             bandMaxes[i] = Mathf.Max(0.999f * bandMaxes[i], FFT.thi.band[i]);
         }
 
 
-        for(int i = waveGradientLength - 1; i >= 1; i--) {
+        for (int i = waveGradientLength - 1; i >= 1; i--) {
             colorWave.SetPixel(i, 0, colorWave.GetPixel(i - 1, 0));
         }
         float r = FFT.thi.band[waveColorRedBand];
@@ -71,7 +73,7 @@ public class TerrainGenerator : MonoBehaviour {
         float b = FFT.thi.band[waveColorBlueBand];
         Color waveColor = new Color(r / bandMaxes[waveColorRedBand], g / bandMaxes[waveColorGreenBand], b / bandMaxes[waveColorBlueBand]);
         colorWave.SetPixel(0, 0, waveColor);
-        Camera.main.backgroundColor = new HSBColor((Time.realtimeSinceStartup / 100) % 1, 1, 0.125f).ToColor();
+        Camera.main.backgroundColor = new HSBColor(((Time.realtimeSinceStartup / skyHueFullCycle) + randomSkyHueOffset) % 1, 1, 0.125f).ToColor();
         //colorWave.SetPixel(0, 0, new Color(r, g, b));
         colorWave.Apply(); //apply changes
         mat.SetTexture(Shader.PropertyToID("_ColorGradient"), colorWave);
