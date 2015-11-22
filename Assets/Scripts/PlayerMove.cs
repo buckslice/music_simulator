@@ -23,13 +23,13 @@ public class PlayerMove : MonoBehaviour {
         newForward.y = 0.0f;
         newForward.Normalize();
 
+        if (autoMove && vert == 0.0f) {
+            vert = 0.5f;
+        }
+
         transform.position += (newForward * vert) * Time.deltaTime * speed;
 
         transform.Rotate(Vector3.up, horiz * Time.deltaTime * angleSpeed);
 
-
-        if (autoMove) {
-            transform.position += transform.forward * Time.deltaTime;
-        }
     }
 }

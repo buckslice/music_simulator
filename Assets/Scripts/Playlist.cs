@@ -7,13 +7,13 @@ public class Playlist : MonoBehaviour {
     public List<AudioClip> tracks = new List<AudioClip>();
     int trackIndex = 999;
 
-	// Use this for initialization
-	void Awake () {
+    // Use this for initialization
+    void Awake() {
         source = GetComponent<AudioSource>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
+    }
+
+    // Update is called once per frame
+    void Update() {
         if (!source.isPlaying || Input.GetKeyDown(KeyCode.Space)) {
             if (++trackIndex >= tracks.Count)
                 trackIndex = 0;
@@ -21,10 +21,12 @@ public class Playlist : MonoBehaviour {
             source.Play();
             TerrainGenerator.thi.resetMaxes();
         }
-	}
+    }
 
     public void AddURL(string url) {
-        StartCoroutine(AddURLRoutine(url));
+        if (url != "") {
+            StartCoroutine(AddURLRoutine(url));
+        }
     }
 
     IEnumerator AddURLRoutine(string url) {

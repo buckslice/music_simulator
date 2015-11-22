@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: .196078435, g: .196078435, b: .196078435, a: .5}
+  m_Color: {r: 1, g: 1, b: 1, a: .5}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -233,14 +233,14 @@ MonoBehaviour:
   mat: {fileID: 2100000, guid: 1a3d1a4e002128c49ae412d1370f874e, type: 2}
   waveGradientLength: 250
   heightGradientLength: 250
-  waveColorRedBand: 0
-  waveColorGreenBand: 1
-  waveColorBlueBand: 2
+  waveColorRedBand: 2
+  waveColorGreenBand: 0
+  waveColorBlueBand: 1
   waveHeightBand: 1
   abberationBand: 2
   skyHueFullCycle: 100
   maxDistortAmplitude: 1
-  distortionBand: 0
+  distortionBand: 2
   bandMaxes:
   - 0
   - 0
@@ -292,11 +292,11 @@ RectTransform:
   - {fileID: 1512062803}
   m_Father: {fileID: 1761016703}
   m_RootOrder: 0
-  m_AnchorMin: {x: .5, y: 1}
-  m_AnchorMax: {x: .5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -5}
-  m_SizeDelta: {x: 160, y: 30}
-  m_Pivot: {x: .5, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 200, y: 30}
+  m_Pivot: {x: 0, y: 0}
 --- !u!114 &1095370600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -316,8 +316,8 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: .960784316, g: .960784316, b: .960784316, a: 1}
+    m_NormalColor: {r: 0, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: .397058845, g: .397058845, b: .397058845, a: 1}
     m_PressedColor: {r: .784313738, g: .784313738, b: .784313738, a: 1}
     m_DisabledColor: {r: .784313738, g: .784313738, b: .784313738, a: .501960814}
     m_ColorMultiplier: 1
@@ -496,7 +496,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 491842, guid: 390dc0325061e0b4693985f3bdc1a498, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 56.2000008
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 491842, guid: 390dc0325061e0b4693985f3bdc1a498, type: 2}
       propertyPath: m_LocalPosition.z
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: .196078435, g: .196078435, b: .196078435, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:

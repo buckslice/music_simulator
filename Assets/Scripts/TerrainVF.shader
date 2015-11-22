@@ -17,24 +17,21 @@
 	}
 	SubShader
 	{
-		Tags { "RenderType"="Opaque"}
+		Tags { "RenderType"="Opaque" "Queue"="Transparent"}
 		LOD 100
 
+        //ZTest On ZWrite Off
 		Pass
 		{
-            Blend SrcAlpha OneMinusSrcAlpha
+
+        Blend SrcAlpha OneMinusSrcAlpha
+        //Cull Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
             #pragma target 3.0
 
 			#include "UnityCG.cginc"
-
-			//struct appdata
-			//{
-			//	float4 vertex : POSITION;
-			//	float2 uv : TEXCOORD0;
-			//};
 
             sampler2D _MainTex;
             sampler2D _NoiseTex;
@@ -54,35 +51,35 @@
 
 			struct v2f
 			{
-				float2 uv : TEXCOORD0;
-                float2 uv2 : TEXCOORD1;
-                float2 uv3 :TEXTCOORD2;
-				float4 vertex : SV_POSITION;
-                float4 color: COLOR;
+				float2 uv : TEXCOORD0;      // normal tex coords
+                float2 uv2 : TEXCOORD1;     // noise tex coords
+                float2 uv3 :TEXTCOORD2;     // dist v to f
+				float4 vertex : SV_POSITION; 
+                float4 color: COLOR;        // mesh colors
 			};
 			
 			v2f vert (appdata_full v)
 			{
 				v2f o;
-				o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
 				o.uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                 o.uv2 = TRANSFORM_TEX(v.texcoord1, _NoiseTex);
 
                 // create ripple and amplify it based on player distance
+                //float ripple = sin(-_Time.y + dist / 10.0)*10.0;
+
                 float dist = o.uv3.x = distance(v.vertex.xz, _PlayerPos.xz);
-                float ripple = sin(-_Time.y + dist / 10.0)*10.0;
                 float xx = dist / 100.0;
-                xx = xx * xx * (3 - 2 * xx);
+                //xx = xx * xx * (3 - 2 * xx);      // cubic s curve
+                xx = xx * xx;                       // quatratic
 
                 //float ripplec = sin(-_Time.z*1.0 + dist / 2.0)*10.0;
                 float4 uvGradient = float4(o.uv3.x / _AlphaBlendMax, 0.5, 0, 0);
 
                 fixed4 gradientColora = tex2Dlod(_HeightGradient, uvGradient);
 
-
-
-                //o.vertex.y += xx * ripple;
-                o.vertex.y += xx * _WaveSizeStrength * gradientColora.r;
+                // offset vertex y based on wave strength and colors
+                v.vertex.y += xx * _WaveSizeStrength * gradientColora.r;
+                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
                 o.color = v.color;
 
                 //o.color.b = 1.0 - ripplec;
@@ -102,6 +99,7 @@
                 uvs.x += .5;
                 fixed4 uvy = tex2D(_NoiseTex, uvs);
 
+                // set color based on uvs plus noise offsets
                 float2 uvGradient = float2(i.uv3.x / _AlphaBlendMax, 0.5);
                 fixed4 gradientColor = tex2D(_ColorGradient, uvGradient);
                 i.color.rgb = lerp(i.color.rgb, gradientColor.rgb, _WaveColorStrength);

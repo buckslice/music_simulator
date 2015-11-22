@@ -3,51 +3,43 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Chunk {
-    public int coordX;
-    public int coordY;
+    public int x;
+    public int y;
     public Mesh mesh;
     public GameObject obj;
 }
 
 public class TerrainGenerator : MonoBehaviour {
 
-    public List<Chunk> chunks = new List<Chunk>();
     public Material mat;
-    private Transform player;
-
     public const int CHUNK_RADIUS = 2;
     public const int SIZE = 32;
     public const int HSIZE = SIZE / 2;
     public const float TRI_SIZE = 2f;
-    private int playerX = 0;
-    private int playerY = 0;
-    private float seed;
-    Texture2D colorWave;
-    Texture2D heightWave;
     public int waveGradientLength = 100;
     public int heightGradientLength = 100;
-
     public int waveColorRedBand = 1;
     public int waveColorGreenBand = 1;
     public int waveColorBlueBand = 1;
     public int waveHeightBand = 0;
     public int abberationBand = 2;
     public int skyHueFullCycle = 100;
-    private float randomSkyHueOffset;
     public float maxDistortAmplitude;
     public int distortionBand = 0;
-
     public float[] bandMaxes = new float[2];
-
     public static TerrainGenerator thi;
 
+    private List<Chunk> chunks = new List<Chunk>();
+    private float randomSkyHueOffset;
+    private Transform player;
+    private int playerX = 0;
+    private int playerY = 0;
+    private float seed;
+    Texture2D colorWave;
+    Texture2D heightWave;
     private UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration chromaticAbberation;
+    private bool colorType = true;
 
-    public void resetMaxes() {
-        for (int i = 0; i < 2; i++) {
-            bandMaxes[i] = 0;
-        }
-    }
     // Use this for initialization
     void Start() {
         thi = this;
@@ -63,7 +55,6 @@ public class TerrainGenerator : MonoBehaviour {
         for (int i = 0; i < 3; i++) {
             bandMaxes[i] = Mathf.Max(0.999f * bandMaxes[i], FFT.thi.band[i]);
         }
-
 
         for (int i = waveGradientLength - 1; i >= 1; i--) {
             colorWave.SetPixel(i, 0, colorWave.GetPixel(i - 1, 0));
@@ -90,6 +81,21 @@ public class TerrainGenerator : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
+        if (Input.GetKeyDown(KeyCode.RightControl)) {
+            colorType = !colorType;
+            if (colorType) {
+                waveColorRedBand = 2;
+                waveColorGreenBand = 0;
+                waveColorBlueBand = 1;
+                mat.SetFloat(Shader.PropertyToID("_WaveColorStrength"), 1.0f);
+                mat.SetFloat(Shader.PropertyToID("_WaveColorMultiplication"), 0.0f);
+            } else {
+                waveColorRedBand = waveColorGreenBand = waveColorBlueBand = 0;
+                mat.SetFloat(Shader.PropertyToID("_WaveColorStrength"), 0.0f);
+                mat.SetFloat(Shader.PropertyToID("_WaveColorMultiplication"), 1.0f);
+            }
+        }
+
         Vector3 p = player.position;
         mat.SetVector(Shader.PropertyToID("_PlayerPos"), new Vector4(p.x, p.y, p.z, 1.0f));
         float hx = HSIZE * TRI_SIZE;
@@ -103,42 +109,43 @@ public class TerrainGenerator : MonoBehaviour {
 
         int px = (int)(player.position.x - hx) / (int)(SIZE * TRI_SIZE);
         int py = (int)(player.position.z - hy) / (int)(SIZE * TRI_SIZE);
-        //int px = (int)(player.position.x - HSIZE * TRI_SIZE) / (int)(SIZE * TRI_SIZE);
-        //int py = (int)(player.position.z - HSIZE * TRI_SIZE) / (int)(SIZE * TRI_SIZE);
         playerX = px;
         playerY = py;
-        //Debug.Log(px + " " + py);
 
         chromaticAbberation.chromaticAberration = -50f * FFT.thi.band[abberationBand];
 
-        checkMeshes();
+        checkForNewChunks();
+        checkForOldChunks();
     }
 
-
-    void checkMeshes() {
-        // check for chunks within player radius
+    // check for chunks within player radius
+    void checkForNewChunks() {
         for (int x = -CHUNK_RADIUS; x <= CHUNK_RADIUS; x++) {
             for (int y = -CHUNK_RADIUS; y <= CHUNK_RADIUS; y++) {
                 bool found = false;
                 for (int i = 0; i < chunks.Count; i++) {
-                    if (chunks[i].coordX == playerX + x && chunks[i].coordY == playerY + y) {
+                    if (chunks[i].x == playerX + x && chunks[i].y == playerY + y) {
                         found = true;
                         break;
                     }
                 }
+
                 if (!found) {
                     generateMesh(x + playerX, y + playerY);
+                    return;
                 }
             }
         }
+    }
 
-        // check for chunks that are no longer nearby player
+    // check for chunks that are no longer nearby player
+    void checkForOldChunks() {
         for (int i = chunks.Count - 1; i >= 0; i--) {
             bool shouldDelete = true;
             for (int x = -CHUNK_RADIUS; x <= CHUNK_RADIUS; x++) {
                 for (int y = -CHUNK_RADIUS; y <= CHUNK_RADIUS; y++) {
                     // if the chunk is valid then continue
-                    if (chunks[i].coordX == playerX + x && chunks[i].coordY == playerY + y) {
+                    if (chunks[i].x == playerX + x && chunks[i].y == playerY + y) {
                         shouldDelete = false;
                         break;
                     }
@@ -162,7 +169,7 @@ public class TerrainGenerator : MonoBehaviour {
         List<Vector2> uvs2 = new List<Vector2>();
         List<int> tris = new List<int>();
 
-        int t = 0;
+        int t = 0;  // number of tris
         for (int x = 0; x < SIZE; x++) {
             for (int y = 0; y < SIZE; y++) {
 
@@ -239,9 +246,15 @@ public class TerrainGenerator : MonoBehaviour {
         Chunk c = new Chunk();
         c.obj = go;
         c.mesh = m;
-        c.coordX = chunkX;
-        c.coordY = chunkY;
+        c.x = chunkX;
+        c.y = chunkY;
         chunks.Add(c);
-        // add to mesh list
     }
+
+    public void resetMaxes() {
+        for (int i = 0; i < 2; i++) {
+            bandMaxes[i] = 0;
+        }
+    }
+
 }

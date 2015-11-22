@@ -151,7 +151,7 @@ Material:
       data:
         first:
           name: _NoiseAmp
-        second: .0572942197
+        second: .156633809
       data:
         first:
           name: _NoiseTexSize
@@ -159,11 +159,11 @@ Material:
       data:
         first:
           name: _AlphaBlendMin
-        second: 103.589996
+        second: 100
       data:
         first:
           name: _AlphaBlendMax
-        second: 136.300003
+        second: 130
       data:
         first:
           name: _WaveStrengthR
@@ -196,4 +196,4 @@ Material:
       data:
         first:
           name: _PlayerPos
-        second: {r: -32.4177742, g: .25908798, b: 45.7216454, a: 1}
+        second: {r: 13.3966265, g: -1.68523145, b: 59.6344185, a: 1}
