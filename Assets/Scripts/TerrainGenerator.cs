@@ -23,10 +23,13 @@ public class TerrainGenerator : MonoBehaviour {
     public int waveColorBlueBand = 1;
     public int waveHeightBand = 0;
     public int abberationBand = 2;
-    public int skyHueFullCycle = 100;
-    public float maxDistortAmplitude;
+    public float abberationStrength = 50f;
     public int distortionBand = 0;
+    public float maxDistortAmplitude;
     public float[] bandMaxes = new float[2];
+    public int skyHueFullCycle = 100;
+    public Texture[] textures;
+    int textureIndex = 0;
     public static TerrainGenerator thi;
 
     private List<Chunk> chunks = new List<Chunk>();
@@ -49,6 +52,8 @@ public class TerrainGenerator : MonoBehaviour {
         heightWave = new Texture2D(heightGradientLength, 1);
         chromaticAbberation = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration>();
         randomSkyHueOffset = Random.value;
+        if(textures.Length > 0)
+            mat.SetTexture(Shader.PropertyToID("_MainTex"), textures[textureIndex]);
     }
 
     void FixedUpdate() {
@@ -95,6 +100,10 @@ public class TerrainGenerator : MonoBehaviour {
                 mat.SetFloat(Shader.PropertyToID("_WaveColorMultiplication"), 1.0f);
             }
         }
+        if(Input.GetKeyDown(KeyCode.LeftControl)) {
+            textureIndex = (textureIndex + 1) % textures.Length;
+            mat.SetTexture(Shader.PropertyToID("_MainTex"), textures[textureIndex]);
+        }
 
         Vector3 p = player.position;
         mat.SetVector(Shader.PropertyToID("_PlayerPos"), new Vector4(p.x, p.y, p.z, 1.0f));
@@ -112,7 +121,8 @@ public class TerrainGenerator : MonoBehaviour {
         playerX = px;
         playerY = py;
 
-        chromaticAbberation.chromaticAberration = -50f * FFT.thi.band[abberationBand];
+        chromaticAbberation.chromaticAberration = -abberationStrength * FFT.thi.band[abberationBand];
+        //chromaticAbberation.chromaticAberration = -abberationStrength * Mathf.Clamp01((FFT.thi.band[abberationBand]) - (FFT.thi.band[distortionBand]));
 
         checkForNewChunks();
         checkForOldChunks();
