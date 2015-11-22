@@ -535,6 +535,10 @@ Prefab:
       propertyPath: tracks.Array.data[5]
       value: 
       objectReference: {fileID: 8300000, guid: 67833231a18aa0a4dbac01651fa9c1ce, type: 3}
+    - target: {fileID: 11411128, guid: 390dc0325061e0b4693985f3bdc1a498, type: 2}
+      propertyPath: autoMove
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 390dc0325061e0b4693985f3bdc1a498, type: 2}
   m_IsPrefabParent: 0

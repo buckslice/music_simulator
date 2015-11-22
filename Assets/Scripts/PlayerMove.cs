@@ -23,6 +23,10 @@ public class PlayerMove : MonoBehaviour {
         newForward.y = 0.0f;
         newForward.Normalize();
 
+        if (Input.GetKeyDown(KeyCode.LeftControl)) {
+            autoMove = !autoMove;
+        }
+
         if (autoMove && vert == 0.0f) {
             vert = 0.5f;
         }

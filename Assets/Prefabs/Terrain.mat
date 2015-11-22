@@ -19,7 +19,7 @@ Material:
         first:
           name: _MainTex
         second:
-          m_Texture: {fileID: 2800000, guid: 333b669c43072aa44a4795415f969176, type: 3}
+          m_Texture: {fileID: 2800000, guid: dcba93c64d5ecbf46b21a5d461542154, type: 3}
           m_Scale: {x: 1, y: 1}
           m_Offset: {x: 0, y: 0}
       data:
@@ -151,7 +151,7 @@ Material:
       data:
         first:
           name: _NoiseAmp
-        second: .00343411579
+        second: .191341251
       data:
         first:
           name: _NoiseTexSize
@@ -196,4 +196,4 @@ Material:
       data:
         first:
           name: _PlayerPos
-        second: {r: -25.0427227, g: 3.73237228, b: 45.5734634, a: 1}
+        second: {r: 18.5134888, g: -.992764235, b: 53.1000671, a: 1}

@@ -52,7 +52,7 @@ public class TerrainGenerator : MonoBehaviour {
         heightWave = new Texture2D(heightGradientLength, 1);
         chromaticAbberation = Camera.main.GetComponent<UnityStandardAssets.ImageEffects.VignetteAndChromaticAberration>();
         randomSkyHueOffset = Random.value;
-        if(textures.Length > 0)
+        if (textures.Length > 0)
             mat.SetTexture(Shader.PropertyToID("_MainTex"), textures[textureIndex]);
     }
 
@@ -86,7 +86,7 @@ public class TerrainGenerator : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (Input.GetKeyDown(KeyCode.RightControl)) {
+        if (Input.GetKeyDown(KeyCode.RightShift)) {
             colorType = !colorType;
             if (colorType) {
                 waveColorRedBand = 2;
@@ -100,7 +100,7 @@ public class TerrainGenerator : MonoBehaviour {
                 mat.SetFloat(Shader.PropertyToID("_WaveColorMultiplication"), 1.0f);
             }
         }
-        if(Input.GetKeyDown(KeyCode.LeftControl)) {
+        if (Input.GetKeyDown(KeyCode.RightControl)) {
             textureIndex = (textureIndex + 1) % textures.Length;
             mat.SetTexture(Shader.PropertyToID("_MainTex"), textures[textureIndex]);
         }
